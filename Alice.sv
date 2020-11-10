@@ -293,7 +293,6 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 wire locked;
 wire clk_sys;
 wire clk_4; // 4MHz
-wire clk_vid;
 
 pll pll
 (
@@ -301,7 +300,6 @@ pll pll
 	.rst(0),
 	.outclk_0(clk_sys),
 	.outclk_1(clk_4),
-	.outclk_2(clk_vid),
 	.locked(locked)
 );
 
@@ -315,7 +313,7 @@ wire vblank;
 wire hsync;
 wire vsync;
 wire audio;
-reg ce_pix;
+wire ce_pix;
 
 wire [15:0] exp_addr;
 wire [7:0] exp_ram_dout;
@@ -332,7 +330,6 @@ mc10 mc10
 	.reset(reset),
 	.clk_sys(clk_sys),
 	.clk_4(clk_4),
-	.clk_vid(clk_vid),
 
 	.ps2_key(ps2_key),
 
@@ -356,6 +353,7 @@ mc10 mc10
 	.vsync(vsync),
 	.hblank(hblank),
 	.vblank(vblank),
+	.ce_pix(ce_pix),
 
 	.audio(audio),
 
@@ -370,8 +368,6 @@ assign VGA_DE = ~(hblank | vblank);
 assign VGA_HS = hsync;
 assign VGA_VS = vsync;
 assign VGA_R = mc10_red | ov_red;
-
-always @(posedge clk_sys) ce_pix = ~ce_pix;
 
 wire [24:0] sdram_addr;
 wire [7:0] sdram_data;
