@@ -159,17 +159,13 @@ assign USER_PP = USER_PP_DRIVE;
 ///////// Default values for ports not used in this core /////////
 
 //assign ADC_BUS  = 'Z;
-// [MiSTer-DB9 BEGIN] - DB9/SNAC8 support: joydb wrapper
+// [MiSTer-DB9 BEGIN] - DB9/SNAC8 support: joydb wrapper clock + 2P select
 wire         CLK_JOY = CLK_50M;                 // Assign clock between 40-50Mhz
-wire   [1:0] joy_type        = status[127:126]; // 0=Off, 1=Saturn, 2=DB9MD, 3=DB15
-wire         joy_2p          = status[125];
-wire         joy_db9md_en    = (joy_type == 2'd2);
-wire         joy_db15_en     = (joy_type == 2'd3);
-wire         joy_any_en      = |joy_type;
-// Legacy 3-bit alias for fork-specific MT32 / SNAC fallback code. Non-canonical
-// RHS variants (ext_iec_en, mt32_disable) need a hand-port — alias is raw.
-wire   [2:0] JOY_FLAG        = {joy_db9md_en, joy_db15_en, joy_2p};
+wire         joy_2p   = status[125];
 // [MiSTer-DB9 END]
+// [MiSTer-DB9-Pro BEGIN] - Saturn-aware joy_type (Saturn arm gated downstream by saturn_unlocked)
+wire   [1:0] joy_type = status[127:126]; // 0=Off, 1=Saturn, 2=DB9MD, 3=DB15
+// [MiSTer-DB9-Pro END]
 
 // [MiSTer-DB9-Pro BEGIN] - Saturn key gate
 wire         saturn_unlocked;                   // driven by hps_io UIO_DB9_KEY (0xFE)
